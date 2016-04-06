@@ -10,6 +10,7 @@
 		7C0D65C71CB50B2900A043E6 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C0D65C61CB50B2900A043E6 /* AppDelegate.swift */; };
 		7C0D65C91CB50B2900A043E6 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7C0D65C81CB50B2900A043E6 /* Assets.xcassets */; };
 		7C0D65CC1CB50B2900A043E6 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7C0D65CA1CB50B2900A043E6 /* MainMenu.xib */; };
+		7C6C817E1CB5C08F003756DC /* bowl.wav in Resources */ = {isa = PBXBuildFile; fileRef = 7C6C817D1CB5C002003756DC /* bowl.wav */; };
 		7CC18B221CB515360087D85D /* StatusMenuController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CC18B211CB515360087D85D /* StatusMenuController.swift */; };
 		7CC18B2A1CB53BBD0087D85D /* breaktimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CC18B291CB53BBD0087D85D /* breaktimer.swift */; };
 		7CC18B311CB558910087D85D /* PreferencesWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CC18B2F1CB558910087D85D /* PreferencesWindow.swift */; };
@@ -43,6 +44,7 @@
 		7C0D65CD1CB50B2900A043E6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7C0D65D21CB50B2900A043E6 /* ibreaktimeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ibreaktimeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		7C0D65DD1CB50B2900A043E6 /* ibreaktimeUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ibreaktimeUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		7C6C817D1CB5C002003756DC /* bowl.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = bowl.wav; sourceTree = "<group>"; };
 		7CC18B211CB515360087D85D /* StatusMenuController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StatusMenuController.swift; sourceTree = "<group>"; };
 		7CC18B291CB53BBD0087D85D /* breaktimer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = breaktimer.swift; sourceTree = "<group>"; };
 		7CC18B2F1CB558910087D85D /* PreferencesWindow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreferencesWindow.swift; sourceTree = "<group>"; };
@@ -79,6 +81,7 @@
 		7C0D65BA1CB50B2900A043E6 = {
 			isa = PBXGroup;
 			children = (
+				7C6C817D1CB5C002003756DC /* bowl.wav */,
 				7C0D65C51CB50B2900A043E6 /* ibreaktime */,
 				7C0D65C41CB50B2900A043E6 /* Products */,
 			);
@@ -219,6 +222,7 @@
 				7CC18B321CB558910087D85D /* PreferencesWindow.xib in Resources */,
 				7C0D65C91CB50B2900A043E6 /* Assets.xcassets in Resources */,
 				7C0D65CC1CB50B2900A043E6 /* MainMenu.xib in Resources */,
+				7C6C817E1CB5C08F003756DC /* bowl.wav in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
