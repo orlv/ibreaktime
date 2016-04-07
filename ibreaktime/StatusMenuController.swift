@@ -26,7 +26,12 @@ class StatusMenuController: NSObject, PreferencesWindowDelegate {
 		NSApp.activateIgnoringOtherApps(true)
 	}
 	
-	//	@IBOutlet weak var preferencesMenu: NSMenuItem!
+	@IBOutlet weak var cyclesMenuItem: NSMenuItem!
+	
+	@IBAction func cyclesClicked(sender: AnyObject) {
+		bt.cyclesCount = 0
+		showStatus()
+	}
 	
 	@IBAction func aboutClicked(sender: AnyObject) {
 		aboutWindow.showWindow(nil)
@@ -34,7 +39,6 @@ class StatusMenuController: NSObject, PreferencesWindowDelegate {
 	}
 	
 	func showStatus() {
-		//		preferencesMenu.title = "Elapsed: \(bt.leftTime/60) min"
 		if bt.leftTime <= 0 {
 			if bt.timeToWork {
 				statusItem.title = "Time to Rest"
@@ -44,6 +48,8 @@ class StatusMenuController: NSObject, PreferencesWindowDelegate {
 		} else {
 			statusItem.title = String(bt.leftTime/60)
 		}
+		
+		cyclesMenuItem.title = "Cycles: \(bt.cyclesCount)"
 	}
 	
 	override func awakeFromNib() {

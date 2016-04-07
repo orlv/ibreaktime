@@ -12,9 +12,13 @@ class breaktimer : NSObject {
 	
 	let soundFileName = "bowl.wav"
 	var timeToWork = true
-
 	private var _workInterval: Int = 55 * 60
 	private var _breakInterval: Int = 5 * 60
+	var alertInterval = 20
+	var leftTime = 0
+	let timerInterval = 10
+	var cyclesCount = 0
+	
 	
 	func updateLeftTime(newInterval: Int, _ prevInterval: Int) {
 		if newInterval > prevInterval {
@@ -62,10 +66,7 @@ class breaktimer : NSObject {
 		}
 	}
 	
-	var alertInterval = 20
-	
-	var leftTime = 0
-	let timerInterval = 10
+
 	
 	func getIdleTime() -> Int {
 		var matchingServices: io_iterator_t = 0
@@ -107,6 +108,7 @@ class breaktimer : NSObject {
 			if leftTime <= 0 && idle >= alertInterval {
 				timeToWork = false
 				leftTime = breakInterval - alertInterval
+				cyclesCount += 1
 			}
 
 			if idle >= breakInterval {

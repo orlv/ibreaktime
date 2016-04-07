@@ -16,11 +16,19 @@
         <customObject id="YLy-65-1bz" customClass="NSFontManager"/>
         <customObject id="92C-VU-NHd" userLabel="StatusMenuController" customClass="StatusMenuController" customModule="ibreaktime" customModuleProvider="target">
             <connections>
+                <outlet property="cyclesMenuItem" destination="uUd-5i-SD1" id="EnH-H5-I6x"/>
                 <outlet property="statusMenu" destination="WHT-Bw-joN" id="bgL-Hh-sRL"/>
             </connections>
         </customObject>
         <menu id="WHT-Bw-joN">
             <items>
+                <menuItem title="Cycles:" id="uUd-5i-SD1">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="cyclesClicked:" target="92C-VU-NHd" id="cHo-Kv-0UO"/>
+                    </connections>
+                </menuItem>
+                <menuItem isSeparatorItem="YES" id="oXj-Ck-4Z8"/>
                 <menuItem title="Preferences" id="bHX-J5-Arj">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
