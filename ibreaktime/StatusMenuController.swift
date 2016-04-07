@@ -23,78 +23,57 @@ class StatusMenuController: NSObject, PreferencesWindowDelegate {
 	
 	@IBAction func preferencesClicked(sender: AnyObject) {
 		preferencesWindow.showWindow(nil)
+		NSApp.activateIgnoringOtherApps(true)
 	}
-
-	@IBOutlet weak var preferencesMenu: NSMenuItem!
+	
+	//	@IBOutlet weak var preferencesMenu: NSMenuItem!
 	
 	@IBAction func aboutClicked(sender: AnyObject) {
 		aboutWindow.showWindow(nil)
+		NSApp.activateIgnoringOtherApps(true)
 	}
 	
-	func timeElapsedTimer() {
-		preferencesMenu.title = "Elapsed: \(bt.leftTime/60) min"
+	func showStatus() {
+		//		preferencesMenu.title = "Elapsed: \(bt.leftTime/60) min"
+		if bt.leftTime <= 0 {
+			if bt.timeToWork {
+				statusItem.title = "Time to Rest"
+			}
+		} else if !bt.timeToWork {
+			statusItem.title = "Rest: \(bt.leftTime/60)"
+		} else {
+			statusItem.title = String(bt.leftTime/60)
+		}
 	}
 	
 	override func awakeFromNib() {
-		let icon = NSImage(named: "statusbarIcon")
-		icon?.template = true
-		statusItem.image = icon
-		statusItem.menu = statusMenu
-		
 		preferencesWindow = PreferencesWindow()
 		preferencesWindow.delegate = self
 		
 		aboutWindow = AboutWindow()
 		
 		bt = breaktimer()
+		bt.start(defaults.integerForKey("workInterval"), defaults.integerForKey("breakInterval"))
 		
-		let w = defaults.integerForKey("workInterval")
-		if w <= 0  || w > 600 {
-			defaults.setValue(bt.workInterval / 60, forKey: "workInterval")
-		} else {
-			bt.workInterval = w * 60
-		}
+		showStatus()
+		statusItem.menu = statusMenu
 		
-		let b = defaults.integerForKey("breakInterval")
-		if b <= 0 || b > 600 {
-			defaults.setValue(bt.breakInterval / 60, forKey: "breakInterval")
-		} else {
-			bt.breakInterval = b * 60
-		}
+		defaults.setValue(bt.workInterval, forKey: "workInterval")
+		defaults.setValue(bt.breakInterval, forKey: "breakInterval")
 		
-		bt.start()
-		timeElapsedTimer()
-		NSTimer.scheduledTimerWithTimeInterval(10, target: self, selector: #selector(timeElapsedTimer), userInfo: nil, repeats: true)
-	}
-	
-	func updatePreferences() {
-		let w = defaults.integerForKey("workInterval") * 60
-		let b = defaults.integerForKey("breakInterval") * 60
-
-		var newInterval:Int
-		var prevInterval:Int
+		showStatus()
+		statusItem.menu = statusMenu
 		
-		if bt!.timeToWork {
-			newInterval = w
-			prevInterval = bt.workInterval
-		} else {
-			newInterval = b
-			prevInterval = bt.breakInterval
-		}
-	
-		if newInterval > prevInterval {
-			bt.leftTime += newInterval - prevInterval
-		} else {
-			bt.leftTime -= prevInterval - newInterval
-		}
-		
-		bt.workInterval = w
-		bt.breakInterval = b
-		
-		timeElapsedTimer()
+		NSTimer.scheduledTimerWithTimeInterval(10, target: self, selector: #selector(showStatus), userInfo: nil, repeats: true)
 	}
 	
 	func preferencesDidUpdate() {
-		updatePreferences()
+		bt.workInterval = defaults.integerForKey("workInterval")
+		bt.breakInterval = defaults.integerForKey("breakInterval")
+		
+		defaults.setValue(bt.workInterval, forKey: "workInterval")
+		defaults.setValue(bt.breakInterval, forKey: "breakInterval")
+		
+		showStatus()
 	}
 }

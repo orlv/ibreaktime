@@ -30,27 +30,15 @@ class PreferencesWindow: NSWindowController, NSWindowDelegate {
 		NSApp.activateIgnoringOtherApps(true)
 		
 		let defaults = NSUserDefaults.standardUserDefaults()
-		workIntervalField.integerValue = defaults.integerForKey("workInterval")
-		breakIntervalField.integerValue = defaults.integerForKey("breakInterval")
+		workIntervalField.integerValue = defaults.integerForKey("workInterval") / 60
+		breakIntervalField.integerValue = defaults.integerForKey("breakInterval") / 60
     }
 	
 	func windowWillClose(notification: NSNotification) {
 		let defaults = NSUserDefaults.standardUserDefaults()
-		var w = workIntervalField.integerValue
-		var b = breakIntervalField.integerValue
 		
-		if w <= 0 || w > 600 {
-			w = 55
-			workIntervalField.integerValue = w
-		}
-
-		if b <= 0 || b > 600 {
-			b = 5
-			breakIntervalField.integerValue = b
-		}
-
-		defaults.setValue(w, forKey: "workInterval")
-		defaults.setValue(b, forKey: "breakInterval")
+		defaults.setValue(workIntervalField.integerValue * 60, forKey: "workInterval")
+		defaults.setValue(breakIntervalField.integerValue * 60, forKey: "breakInterval")
 		delegate?.preferencesDidUpdate()
 	}
 	

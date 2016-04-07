@@ -16,7 +16,6 @@
         <customObject id="YLy-65-1bz" customClass="NSFontManager"/>
         <customObject id="92C-VU-NHd" userLabel="StatusMenuController" customClass="StatusMenuController" customModule="ibreaktime" customModuleProvider="target">
             <connections>
-                <outlet property="preferencesMenu" destination="bHX-J5-Arj" id="6cM-ta-XKP"/>
                 <outlet property="statusMenu" destination="WHT-Bw-joN" id="bgL-Hh-sRL"/>
             </connections>
         </customObject>

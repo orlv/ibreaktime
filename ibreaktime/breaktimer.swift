@@ -13,8 +13,55 @@ class breaktimer : NSObject {
 	let soundFileName = "bowl.wav"
 	var timeToWork = true
 
-	var workInterval = 55*60
-	var breakInterval = 5*60
+	private var _workInterval: Int = 55 * 60
+	private var _breakInterval: Int = 5 * 60
+	
+	func updateLeftTime(newInterval: Int, _ prevInterval: Int) {
+		if newInterval > prevInterval {
+			leftTime += newInterval - prevInterval
+		} else {
+			leftTime -= prevInterval - newInterval
+		}
+	}
+	
+	var workInterval: Int {
+		set {
+			let prevInterval = _workInterval
+			
+			if newValue < 60 || newValue > 600 * 60 {
+				_workInterval = 55 * 60
+			} else {
+				_workInterval = newValue
+			}
+			
+			if timeToWork {
+				updateLeftTime(_workInterval, prevInterval)
+			}
+		}
+		get {
+			return _workInterval
+		}
+	}
+	
+	var breakInterval: Int {
+		set {
+			let prevInterval = _breakInterval
+			if newValue < 60 || newValue > 600 * 60 {
+				_breakInterval = 5 * 60
+			} else {
+				_breakInterval = newValue
+			}
+			
+			if !timeToWork {
+				updateLeftTime(_breakInterval, prevInterval)
+			}
+		}
+		
+		get {
+			return _breakInterval
+		}
+	}
+	
 	var alertInterval = 20
 	
 	var leftTime = 0
@@ -40,7 +87,6 @@ class breaktimer : NSObject {
 		
 		return idle
 	}
-	
 	
 	func playSound() {
 		NSSound(named: soundFileName)!.play()
@@ -76,9 +122,11 @@ class breaktimer : NSObject {
 		}
 	}
 
-	 func start() {
-		NSTimer.scheduledTimerWithTimeInterval(Double(timerInterval), target: self, selector: #selector(breaktimer), userInfo: nil, repeats: true)
+	 func start(initialWorkInteval: Int, _ initialBreakInterval: Int) {
+		workInterval = initialWorkInteval
+		breakInterval = initialBreakInterval
 		leftTime = workInterval
+		NSTimer.scheduledTimerWithTimeInterval(Double(timerInterval), target: self, selector: #selector(breaktimer), userInfo: nil, repeats: true)
 	}
 	
 }
