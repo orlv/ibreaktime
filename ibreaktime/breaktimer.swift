@@ -14,7 +14,7 @@ class breaktimer : NSObject {
 	var timeToWork = true
 	private var _workInterval: Int = 55 * 60
 	private var _breakInterval: Int = 5 * 60
-	var alertInterval = 20
+	var alertInterval = 5 * 60
 	var leftTime = 0
 	let timerInterval = 10
 	var cyclesCount = 0
@@ -99,12 +99,18 @@ class breaktimer : NSObject {
 	}
 	
 	func breaktimer() {
-		if Int(-localTime.timeIntervalSinceNow) > workInterval {
-			resetTimer()
+		var idle = getIdleTime()
+		
+		if Int(-localTime.timeIntervalSinceNow) > idle {
+			idle = Int(-localTime.timeIntervalSinceNow)
+			if !timeToWork && idle > breakInterval {
+				idle = 0
+				timeToWork = true
+				leftTime = workInterval
+				return
+			}
 		}
 		localTime = NSDate()
-		
-		let idle = getIdleTime()
 
 		if timeToWork {
 			if idle < alertInterval && leftTime > 0 {
