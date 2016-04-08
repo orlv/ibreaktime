@@ -38,6 +38,11 @@ class StatusMenuController: NSObject, PreferencesWindowDelegate {
 		NSApp.activateIgnoringOtherApps(true)
 	}
 	
+	@IBAction func resetTimerClicked(sender: AnyObject) {
+		bt.resetTimer()
+		showStatus()
+	}
+	
 	func showStatus() {
 		if bt.leftTime <= 0 {
 			if bt.timeToWork {

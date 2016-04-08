@@ -18,7 +18,7 @@ class breaktimer : NSObject {
 	var leftTime = 0
 	let timerInterval = 10
 	var cyclesCount = 0
-	
+	var localTime = NSDate()
 	
 	func updateLeftTime(newInterval: Int, _ prevInterval: Int) {
 		if newInterval > prevInterval {
@@ -93,7 +93,17 @@ class breaktimer : NSObject {
 		NSSound(named: soundFileName)!.play()
 	}
 	
+	func resetTimer() {
+		timeToWork = true
+		leftTime = workInterval
+	}
+	
 	func breaktimer() {
+		if Int(-localTime.timeIntervalSinceNow) > workInterval {
+			resetTimer()
+		}
+		localTime = NSDate()
+		
 		let idle = getIdleTime()
 
 		if timeToWork {
@@ -128,6 +138,7 @@ class breaktimer : NSObject {
 		workInterval = initialWorkInteval
 		breakInterval = initialBreakInterval
 		leftTime = workInterval
+
 		NSTimer.scheduledTimerWithTimeInterval(Double(timerInterval), target: self, selector: #selector(breaktimer), userInfo: nil, repeats: true)
 	}
 	

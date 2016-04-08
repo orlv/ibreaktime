@@ -28,6 +28,12 @@
                         <action selector="cyclesClicked:" target="92C-VU-NHd" id="cHo-Kv-0UO"/>
                     </connections>
                 </menuItem>
+                <menuItem title="Reset Timer" id="R22-0m-9vN">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="resetTimerClicked:" target="92C-VU-NHd" id="Lh4-ch-8mZ"/>
+                    </connections>
+                </menuItem>
                 <menuItem isSeparatorItem="YES" id="oXj-Ck-4Z8"/>
                 <menuItem title="Preferences" id="bHX-J5-Arj">
                     <modifierMask key="keyEquivalentModifierMask"/>
@@ -35,7 +41,6 @@
                         <action selector="preferencesClicked:" target="92C-VU-NHd" id="kPK-Nh-vif"/>
                     </connections>
                 </menuItem>
-                <menuItem isSeparatorItem="YES" id="SlK-n7-DGC"/>
                 <menuItem title="About" id="Txi-4g-xK2">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
