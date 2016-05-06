@@ -14,7 +14,7 @@ class breaktimer : NSObject {
 	var timeToWork = true
 	private var _workInterval: Int = 55 * 60
 	private var _breakInterval: Int = 5 * 60
-	var alertInterval = 5 * 60
+	var alertInterval = 20
 	var leftTime = 0
 	let timerInterval = 10
 	var cyclesCount = 0
