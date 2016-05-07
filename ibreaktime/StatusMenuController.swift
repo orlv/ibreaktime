@@ -49,9 +49,9 @@ class StatusMenuController: NSObject, PreferencesWindowDelegate {
 				statusItem.title = "Time to Rest"
 			}
 		} else if !bt.timeToWork {
-			statusItem.title = "Rest: \(bt.leftTime/60)"
+			statusItem.title = "Rest: \(lroundf(Float(bt.leftTime)/60))"
 		} else {
-			statusItem.title = String(bt.leftTime/60)
+			statusItem.title = String(lroundf(Float(bt.leftTime)/60))
 		}
 		
 		cyclesMenuItem.title = "Cycles: \(bt.cyclesCount)"
