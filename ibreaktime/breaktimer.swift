@@ -132,8 +132,7 @@ class Breaktimer : NSObject {
 		
 		// check if mac was in sleep mode
 		if Int(-lastCheckTime.timeIntervalSinceNow) > breakInterval {
-			timeToWork = true
-			leftTime = workInterval
+			resetTimer()
 		}
 		lastCheckTime = NSDate()
 		
@@ -160,8 +159,7 @@ class Breaktimer : NSObject {
 			leftTime -= timerInterval
 			if leftTime <= 0 {
 				playSound()
-				timeToWork = true
-				leftTime = workInterval
+				resetTimer()
 			}
 		}
 	}
