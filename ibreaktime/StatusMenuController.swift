@@ -32,7 +32,7 @@ class StatusMenuController: NSObject, PreferencesWindowDelegate {
 	@IBAction func cyclesClicked(sender: AnyObject) {
 		bt.cyclesCount = 0
 		defaults.setValue(0, forKey: "cyclesCount")
-		updateStatus()
+//		updateStatus()
 	}
 	
 	@IBAction func aboutClicked(sender: AnyObject) {
@@ -45,11 +45,19 @@ class StatusMenuController: NSObject, PreferencesWindowDelegate {
 		updateStatus()
 	}
 	
+	@IBOutlet weak var totalWorkTimeMenuItem: NSMenuItem!
+	
+	@IBAction func totalWorkTimeClicked(sender: AnyObject) {
+		bt.totalWorkTime = 0
+		defaults.setValue(0, forKey: "totalWorkTime")
+	}
+	
 	func updateStatus() {
 		var timeString: String
 		
 		defaults.setValue(bt.cyclesCount, forKey: "cyclesCount")
 		defaults.setValue(bt.lastCheckTime, forKey: "lastCheckTime")
+		defaults.setValue(bt.totalWorkTime, forKey: "totalWorkTime")
 		
 		if showSeconds {
 			timeString = String(format: "%d:%02d", bt.leftTime/60, bt.leftTime%60)
@@ -68,6 +76,7 @@ class StatusMenuController: NSObject, PreferencesWindowDelegate {
 		}
 		
 		cyclesMenuItem.title = "Cycles: \(bt.cyclesCount)"
+		totalWorkTimeMenuItem.title = String(format: "Total Work Time: %d:%02d (~%d Cycles)", bt.totalWorkTime/60, bt.totalWorkTime%60, bt.totalWorkTime/bt.workInterval)
 	}
 	
 	func showSecondsCheckboxClicked(showSeconds: Bool) {
@@ -102,7 +111,6 @@ class StatusMenuController: NSObject, PreferencesWindowDelegate {
 		preferencesWindow.delegate = self
 		
 		aboutWindow = AboutWindow()
-		
 		showSeconds = defaults.boolForKey("showSeconds")
 		
 		bt = Breaktimer(defaults.integerForKey("workInterval"), defaults.integerForKey("breakInterval"), defaults.integerForKey("maxIdleInterval"))
@@ -112,6 +120,10 @@ class StatusMenuController: NSObject, PreferencesWindowDelegate {
 		
 		if let lastCheckTime = defaults.objectForKey("lastCheckTime") {
 			bt.checkCyclesCounter(Int(-lastCheckTime.timeIntervalSinceNow))
+		}
+		
+		if bt.cyclesCount > 0 {
+			bt.totalWorkTime = defaults.integerForKey("totalWorkTime")
 		}
 		
 		updateStatus()

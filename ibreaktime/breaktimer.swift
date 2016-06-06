@@ -19,6 +19,7 @@ class Breaktimer : NSObject {
 	var timeToWork = true
 	var leftTime = 0
 	var cyclesCount = 0
+	var totalWorkTime = 0
 	
 	func updateLeftTime(newInterval: Int, _ prevInterval: Int) {
 		if newInterval > prevInterval {
@@ -70,8 +71,8 @@ class Breaktimer : NSObject {
 	
 	var cyclesResetIdleInterval: Int {
 		set {
-			// between 1 and 12 hours. defaulf: 5 hours
-			if newValue < 60 * 60 || newValue > 12 * 60 * 60 {
+			// between 1 and 12 hours. defaulf: 5 hours. 0: disable
+			if newValue < 0 || newValue > 12 * 60 * 60 {
 				_cyclesResetIdleInterval = 5 * 60 * 60
 			} else {
 				_cyclesResetIdleInterval = newValue
@@ -93,7 +94,8 @@ class Breaktimer : NSObject {
 	
 	// check if we need reset cycles counter
 	func checkCyclesCounter(intervalFromLastTimerTick: Int) {
-		if (intervalFromLastTimerTick > cyclesResetIdleInterval) || (idleTimer.idleTime > cyclesResetIdleInterval) {
+		if	cyclesResetIdleInterval > 0 &&
+			((intervalFromLastTimerTick > cyclesResetIdleInterval) || (idleTimer.idleTime > cyclesResetIdleInterval)) {
 			cyclesCount = 0
 		}
 	}
@@ -115,6 +117,7 @@ class Breaktimer : NSObject {
 		if timeToWork {
 			if !idleTimer.idle && leftTime > 0 {
 				leftTime -= timerInterval
+				totalWorkTime += timerInterval
 				if leftTime <= 0 {
 					playSound()
 				}
@@ -135,6 +138,7 @@ class Breaktimer : NSObject {
 			// wait until user takes a break
 			if leftTime == breakInterval {
 				if !idleTimer.idle {
+					totalWorkTime += timerInterval
 					return
 				} else {
 					leftTime -= idleTimer.maxIdleInterval

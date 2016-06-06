@@ -18,6 +18,8 @@
             <connections>
                 <outlet property="cyclesMenuItem" destination="uUd-5i-SD1" id="EnH-H5-I6x"/>
                 <outlet property="statusMenu" destination="WHT-Bw-joN" id="bgL-Hh-sRL"/>
+                <outlet property="totalTimeMenuItem" destination="cn8-53-Gjd" id="FhR-9j-ZLL"/>
+                <outlet property="totalWorkTimeMenuItem" destination="cn8-53-Gjd" id="v7h-P8-CeZ"/>
             </connections>
         </customObject>
         <menu id="WHT-Bw-joN">
@@ -26,6 +28,12 @@
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="cyclesClicked:" target="92C-VU-NHd" id="cHo-Kv-0UO"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="Total Work Time" id="cn8-53-Gjd">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="totalWorkTimeClicked:" target="92C-VU-NHd" id="mvH-Ik-Ito"/>
                     </connections>
                 </menuItem>
                 <menuItem title="Reset Timer" id="R22-0m-9vN">
