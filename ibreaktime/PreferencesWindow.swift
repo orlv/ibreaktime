@@ -10,6 +10,7 @@ import Cocoa
 
 protocol PreferencesWindowDelegate {
 	func preferencesDidUpdate()
+	func showSecondsCheckboxClicked(showSeconds: Bool)
 }
 
 class PreferencesWindow: NSWindowController, NSWindowDelegate {
@@ -18,8 +19,11 @@ class PreferencesWindow: NSWindowController, NSWindowDelegate {
 	@IBOutlet weak var workIntervalField: NSTextField!
 	@IBOutlet weak var breakIntervalField: NSTextField!
 	@IBOutlet weak var maxIdleIntervalField: NSTextField!
+	@IBOutlet weak var showSecondsCheckbox: NSButton!
 	
-	
+	@IBAction func showSecondsCheckboxClicked(sender: AnyObject) {
+		delegate?.showSecondsCheckboxClicked(Bool(showSecondsCheckbox.integerValue))
+	}
 	
 	override var windowNibName : String! {
 		return "PreferencesWindow"
@@ -35,6 +39,7 @@ class PreferencesWindow: NSWindowController, NSWindowDelegate {
 		workIntervalField.integerValue = defaults.integerForKey("workInterval") / 60
 		breakIntervalField.integerValue = defaults.integerForKey("breakInterval") / 60
 		maxIdleIntervalField.integerValue = defaults.integerForKey("maxIdleInterval")
+		showSecondsCheckbox.integerValue = Int(defaults.boolForKey("showSeconds"))
 	}
 	
 	func windowWillClose(notification: NSNotification) {
@@ -43,6 +48,7 @@ class PreferencesWindow: NSWindowController, NSWindowDelegate {
 		defaults.setValue(workIntervalField.integerValue * 60, forKey: "workInterval")
 		defaults.setValue(breakIntervalField.integerValue * 60, forKey: "breakInterval")
 		defaults.setValue(maxIdleIntervalField.integerValue, forKey: "maxIdleInterval")
+		defaults.setValue(Bool(showSecondsCheckbox.integerValue), forKey: "showSeconds")
 		delegate?.preferencesDidUpdate()
 	}
 	

@@ -16,6 +16,7 @@ class StatusMenuController: NSObject, PreferencesWindowDelegate {
 	let statusItem = NSStatusBar.systemStatusBar().statusItemWithLength(NSVariableStatusItemLength)
 	let defaults = NSUserDefaults.standardUserDefaults()
 	var bt: Breaktimer!
+	var showSeconds = false
 	
 	@IBAction func quitClicked(sender: AnyObject) {
 		NSApplication.sharedApplication().terminate(self)
@@ -44,17 +45,27 @@ class StatusMenuController: NSObject, PreferencesWindowDelegate {
 	}
 	
 	func showStatus() {
-		if bt.leftTime <= 0 {
+		var timeString: String
+		
+		if bt.leftTime > 0 {
+			if showSeconds {
+				timeString = String(format: "%d:%02d", bt.leftTime/60, bt.leftTime%60)
+			} else {
+				timeString = String(lroundf(Float(bt.leftTime)/60))
+			}
+			
+			if bt.timeToWork {
+				statusItem.title = timeString
+			} else {
+				statusItem.title = "Rest: \(timeString)"
+			}
+		} else {
 			if bt.timeToWork {
 				statusItem.title = "Time to Rest"
 			}
-		} else if !bt.timeToWork {
-			statusItem.title = "Rest: \(lroundf(Float(bt.leftTime)/60))"
-		} else {
-			statusItem.title = String(lroundf(Float(bt.leftTime)/60))
 		}
 		
-		cyclesMenuItem.title = "Cycles: \(bt.cyclesCount)"
+		cyclesMenuItem.title = "Cycles: \(bt.cyclesCount) (click to reset)"
 	}
 	
 	override func awakeFromNib() {
@@ -62,6 +73,8 @@ class StatusMenuController: NSObject, PreferencesWindowDelegate {
 		preferencesWindow.delegate = self
 		
 		aboutWindow = AboutWindow()
+		
+		showSeconds = defaults.boolForKey("showSeconds")
 		
 		bt = Breaktimer(defaults.integerForKey("workInterval"), defaults.integerForKey("breakInterval"), defaults.integerForKey("maxIdleInterval"))
 		
@@ -72,10 +85,12 @@ class StatusMenuController: NSObject, PreferencesWindowDelegate {
 		defaults.setValue(bt.breakInterval, forKey: "breakInterval")
 		defaults.setValue(bt.idleTimer.maxIdleInterval, forKey: "maxIdleInterval")
 		
-		showStatus()
-		statusItem.menu = statusMenu
-		
 		NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: #selector(showStatus), userInfo: nil, repeats: true)
+	}
+	
+	func showSecondsCheckboxClicked(showSeconds: Bool) {
+		self.showSeconds = showSeconds
+		showStatus()
 	}
 	
 	func preferencesDidUpdate() {
