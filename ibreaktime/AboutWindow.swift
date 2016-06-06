@@ -9,7 +9,6 @@
 import Cocoa
 
 class AboutWindow: NSWindowController {
-	
 	@IBOutlet weak var versionText: NSTextField!
 
 	override var windowNibName : String! {
@@ -30,5 +29,4 @@ class AboutWindow: NSWindowController {
 		self.window?.makeKeyAndOrderFront(nil)
 		NSApp.activateIgnoringOtherApps(true)
 	}
-	
 }

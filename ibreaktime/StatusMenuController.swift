@@ -34,7 +34,7 @@ class StatusMenuController: NSObject, PreferencesWindowDelegate {
 		defaults.setValue(0, forKey: "cyclesCount")
 		showStatus()
 	}
-
+	
 	@IBAction func aboutClicked(sender: AnyObject) {
 		aboutWindow.showWindow(nil)
 		NSApp.activateIgnoringOtherApps(true)
@@ -49,7 +49,8 @@ class StatusMenuController: NSObject, PreferencesWindowDelegate {
 		var timeString: String
 		
 		defaults.setValue(bt.cyclesCount, forKey: "cyclesCount")
-
+		defaults.setValue(bt.lastCheckTime, forKey: "lastCheckTime")
+		
 		if bt.leftTime > 0 {
 			if showSeconds {
 				timeString = String(format: "%d:%02d", bt.leftTime/60, bt.leftTime%60)
@@ -68,7 +69,7 @@ class StatusMenuController: NSObject, PreferencesWindowDelegate {
 			}
 		}
 		
-		cyclesMenuItem.title = "Cycles: \(bt.cyclesCount) (click to reset)"
+		cyclesMenuItem.title = "Cycles: \(bt.cyclesCount)"
 	}
 	
 	func showSecondsCheckboxClicked(showSeconds: Bool) {
@@ -76,14 +77,24 @@ class StatusMenuController: NSObject, PreferencesWindowDelegate {
 		showStatus()
 	}
 	
-	func preferencesDidUpdate() {
+	func loadPreferences() {
 		bt.workInterval = defaults.integerForKey("workInterval")
 		bt.breakInterval = defaults.integerForKey("breakInterval")
 		bt.idleTimer.maxIdleInterval = defaults.integerForKey("maxIdleInterval")
-		
+		bt.cyclesResetIdleInterval = defaults.integerForKey("cyclesResetIdleInterval")
+	}
+	
+	func savePreferences() {
 		defaults.setValue(bt.workInterval, forKey: "workInterval")
 		defaults.setValue(bt.breakInterval, forKey: "breakInterval")
 		defaults.setValue(bt.idleTimer.maxIdleInterval, forKey: "maxIdleInterval")
+		defaults.setValue(bt.cyclesResetIdleInterval, forKey: "cyclesResetIdleInterval")
+	}
+	
+	func preferencesDidUpdate() {
+		// check intervals and re-save them
+		loadPreferences()
+		savePreferences()
 		
 		showStatus()
 	}
@@ -98,18 +109,20 @@ class StatusMenuController: NSObject, PreferencesWindowDelegate {
 		
 		bt = Breaktimer(defaults.integerForKey("workInterval"), defaults.integerForKey("breakInterval"), defaults.integerForKey("maxIdleInterval"))
 		
-		
 		bt.cyclesCount = defaults.integerForKey("cyclesCount")
+		bt.cyclesResetIdleInterval = defaults.integerForKey("cyclesResetIdleInterval")
+		
+		if let lastCheckTime = defaults.objectForKey("lastCheckTime") {
+			bt.checkCyclesCounter(Int(-lastCheckTime.timeIntervalSinceNow))
+		}
 		
 		showStatus()
 		statusItem.menu = statusMenu
 		
-		defaults.setValue(bt.workInterval, forKey: "workInterval")
-		defaults.setValue(bt.breakInterval, forKey: "breakInterval")
-		defaults.setValue(bt.idleTimer.maxIdleInterval, forKey: "maxIdleInterval")
+		savePreferences()
 		
 		NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: #selector(showStatus), userInfo: nil, repeats: true)
 	}
 	
-
+	
 }

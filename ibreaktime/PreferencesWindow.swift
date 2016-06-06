@@ -20,6 +20,7 @@ class PreferencesWindow: NSWindowController, NSWindowDelegate {
 	@IBOutlet weak var breakIntervalField: NSTextField!
 	@IBOutlet weak var maxIdleIntervalField: NSTextField!
 	@IBOutlet weak var showSecondsCheckbox: NSButton!
+	@IBOutlet weak var cyclesResetIdleInterval: NSTextField!
 	
 	@IBAction func showSecondsCheckboxClicked(sender: AnyObject) {
 		delegate?.showSecondsCheckboxClicked(Bool(showSecondsCheckbox.integerValue))
@@ -29,29 +30,39 @@ class PreferencesWindow: NSWindowController, NSWindowDelegate {
 		return "PreferencesWindow"
 	}
 	
+	func loadFields() {
+		let defaults = NSUserDefaults.standardUserDefaults()
+		
+		workIntervalField.integerValue = defaults.integerForKey("workInterval") / 60
+		breakIntervalField.integerValue = defaults.integerForKey("breakInterval") / 60
+		maxIdleIntervalField.integerValue = defaults.integerForKey("maxIdleInterval")
+		cyclesResetIdleInterval.integerValue = defaults.integerForKey("cyclesResetIdleInterval") / (60 * 60)
+		showSecondsCheckbox.integerValue = Int(defaults.boolForKey("showSeconds"))
+	}
+	
+	func saveFields() {
+		let defaults = NSUserDefaults.standardUserDefaults()
+		
+		defaults.setValue(workIntervalField.integerValue * 60, forKey: "workInterval")
+		defaults.setValue(breakIntervalField.integerValue * 60, forKey: "breakInterval")
+		defaults.setValue(maxIdleIntervalField.integerValue, forKey: "maxIdleInterval")
+		defaults.setValue(cyclesResetIdleInterval.integerValue * 60 * 60, forKey: "cyclesResetIdleInterval")
+		defaults.setValue(Bool(showSecondsCheckbox.integerValue), forKey: "showSeconds")
+	}
+	
 	override func windowDidLoad() {
 		super.windowDidLoad()
 		self.window?.center()
 		self.window?.makeKeyAndOrderFront(nil)
 		NSApp.activateIgnoringOtherApps(true)
 		
-		let defaults = NSUserDefaults.standardUserDefaults()
-
-		workIntervalField.integerValue = defaults.integerForKey("workInterval") / 60
-		breakIntervalField.integerValue = defaults.integerForKey("breakInterval") / 60
-		maxIdleIntervalField.integerValue = defaults.integerForKey("maxIdleInterval")
-		showSecondsCheckbox.integerValue = Int(defaults.boolForKey("showSeconds"))
+		loadFields()
 	}
 	
 	func windowWillClose(notification: NSNotification) {
-		let defaults = NSUserDefaults.standardUserDefaults()
-		
-		defaults.setValue(workIntervalField.integerValue * 60, forKey: "workInterval")
-		defaults.setValue(breakIntervalField.integerValue * 60, forKey: "breakInterval")
-		defaults.setValue(maxIdleIntervalField.integerValue, forKey: "maxIdleInterval")
-		defaults.setValue(Bool(showSecondsCheckbox.integerValue), forKey: "showSeconds")
-
+		saveFields()
 		delegate?.preferencesDidUpdate()
+		loadFields()
 	}
 	
 	
