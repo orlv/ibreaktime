@@ -14,7 +14,7 @@ class breaktimer : NSObject {
 	var timeToWork = true
 	private var _workInterval: Int = 55 * 60
 	private var _breakInterval: Int = 5 * 60
-	var alertInterval = 20
+	var maxIdleInterval = 20
 	var leftTime = 0
 	let timerInterval = 10
 	var cyclesCount = 0
@@ -113,7 +113,7 @@ class breaktimer : NSObject {
 		localTime = NSDate()
 
 		if timeToWork {
-			if idle < alertInterval && leftTime > 0 {
+			if idle < maxIdleInterval && leftTime > 0 {
 				leftTime -= timerInterval
 				if leftTime <= 0 {
 					playSound()
@@ -121,9 +121,9 @@ class breaktimer : NSObject {
 			}
 
 			//	Wait until user takes a break
-			if leftTime <= 0 && idle >= alertInterval {
+			if leftTime <= 0 && idle >= maxIdleInterval {
 				timeToWork = false
-				leftTime = breakInterval - alertInterval
+				leftTime = breakInterval - maxIdleInterval
 				cyclesCount += 1
 			}
 

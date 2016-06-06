@@ -102,10 +102,10 @@
 			children = (
 				7C0D65C61CB50B2900A043E6 /* AppDelegate.swift */,
 				7CC18B291CB53BBD0087D85D /* breaktimer.swift */,
+				7CC18B211CB515360087D85D /* StatusMenuController.swift */,
 				7CC18B2F1CB558910087D85D /* PreferencesWindow.swift */,
 				7CC18B301CB558910087D85D /* PreferencesWindow.xib */,
 				7C0D65CA1CB50B2900A043E6 /* MainMenu.xib */,
-				7CC18B211CB515360087D85D /* StatusMenuController.swift */,
 				7CFAC9F01CB57679005B9554 /* AboutWindow.swift */,
 				7CFAC9F11CB57679005B9554 /* AboutWindow.xib */,
 				7C0D65C81CB50B2900A043E6 /* Assets.xcassets */,
