@@ -32,7 +32,7 @@ class StatusMenuController: NSObject, PreferencesWindowDelegate {
 	@IBAction func cyclesClicked(sender: AnyObject) {
 		bt.cyclesCount = 0
 		defaults.setValue(0, forKey: "cyclesCount")
-		showStatus()
+		updateStatus()
 	}
 	
 	@IBAction func aboutClicked(sender: AnyObject) {
@@ -42,30 +42,28 @@ class StatusMenuController: NSObject, PreferencesWindowDelegate {
 	
 	@IBAction func resetTimerClicked(sender: AnyObject) {
 		bt.resetTimer()
-		showStatus()
+		updateStatus()
 	}
 	
-	func showStatus() {
+	func updateStatus() {
 		var timeString: String
 		
 		defaults.setValue(bt.cyclesCount, forKey: "cyclesCount")
 		defaults.setValue(bt.lastCheckTime, forKey: "lastCheckTime")
 		
-		if bt.leftTime > 0 {
-			if showSeconds {
-				timeString = String(format: "%d:%02d", bt.leftTime/60, bt.leftTime%60)
-			} else {
-				timeString = String(lroundf(Float(bt.leftTime)/60))
-			}
-			
-			if bt.timeToWork {
-				statusItem.title = timeString
+		if showSeconds {
+			timeString = String(format: "%d:%02d", bt.leftTime/60, bt.leftTime%60)
+		} else {
+			timeString = String(lroundf(Float(bt.leftTime)/60))
+		}
+		
+		if bt.timeToWork {
+			statusItem.title = timeString
+		} else {
+			if bt.leftTime == bt.breakInterval {
+				statusItem.title = "Time to Rest"
 			} else {
 				statusItem.title = "Rest: \(timeString)"
-			}
-		} else {
-			if bt.timeToWork {
-				statusItem.title = "Time to Rest"
 			}
 		}
 		
@@ -74,7 +72,7 @@ class StatusMenuController: NSObject, PreferencesWindowDelegate {
 	
 	func showSecondsCheckboxClicked(showSeconds: Bool) {
 		self.showSeconds = showSeconds
-		showStatus()
+		updateStatus()
 	}
 	
 	func loadPreferences() {
@@ -96,7 +94,7 @@ class StatusMenuController: NSObject, PreferencesWindowDelegate {
 		loadPreferences()
 		savePreferences()
 		
-		showStatus()
+		updateStatus()
 	}
 	
 	override func awakeFromNib() {
@@ -116,12 +114,12 @@ class StatusMenuController: NSObject, PreferencesWindowDelegate {
 			bt.checkCyclesCounter(Int(-lastCheckTime.timeIntervalSinceNow))
 		}
 		
-		showStatus()
+		updateStatus()
 		statusItem.menu = statusMenu
 		
 		savePreferences()
 		
-		NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: #selector(showStatus), userInfo: nil, repeats: true)
+		NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: #selector(updateStatus), userInfo: nil, repeats: true)
 	}
 	
 	

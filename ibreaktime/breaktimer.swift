@@ -120,10 +120,10 @@ class Breaktimer : NSObject {
 				}
 			}
 			
-			//	work time is done, wait until user takes a break
-			if leftTime <= 0 && idleTimer.idle {
+			//	work time is done
+			if leftTime <= 0 {
 				timeToWork = false
-				leftTime = breakInterval - idleTimer.maxIdleInterval
+				leftTime = breakInterval
 				cyclesCount += 1
 			}
 			
@@ -131,7 +131,16 @@ class Breaktimer : NSObject {
 			if idleTimer.idleTime >= breakInterval {
 				leftTime = workInterval
 			}
-		} else { // if time to break
+		} else { // time to break
+			// wait until user takes a break
+			if leftTime == breakInterval {
+				if !idleTimer.idle {
+					return
+				} else {
+					leftTime -= idleTimer.maxIdleInterval
+				}
+			}
+			
 			leftTime -= timerInterval
 			if leftTime <= 0 {
 				playSound()
