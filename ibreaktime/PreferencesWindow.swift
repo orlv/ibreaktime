@@ -36,6 +36,7 @@ class PreferencesWindow: NSWindowController, NSWindowDelegate {
 		NSApp.activateIgnoringOtherApps(true)
 		
 		let defaults = NSUserDefaults.standardUserDefaults()
+
 		workIntervalField.integerValue = defaults.integerForKey("workInterval") / 60
 		breakIntervalField.integerValue = defaults.integerForKey("breakInterval") / 60
 		maxIdleIntervalField.integerValue = defaults.integerForKey("maxIdleInterval")
@@ -49,6 +50,7 @@ class PreferencesWindow: NSWindowController, NSWindowDelegate {
 		defaults.setValue(breakIntervalField.integerValue * 60, forKey: "breakInterval")
 		defaults.setValue(maxIdleIntervalField.integerValue, forKey: "maxIdleInterval")
 		defaults.setValue(Bool(showSecondsCheckbox.integerValue), forKey: "showSeconds")
+
 		delegate?.preferencesDidUpdate()
 	}
 	
