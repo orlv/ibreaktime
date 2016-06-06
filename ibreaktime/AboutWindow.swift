@@ -10,6 +10,8 @@ import Cocoa
 
 class AboutWindow: NSWindowController {
 	
+	@IBOutlet weak var versionText: NSTextField!
+
 	override var windowNibName : String! {
 		return "AboutWindow"
 	}
@@ -20,6 +22,10 @@ class AboutWindow: NSWindowController {
 	
 	override func windowDidLoad() {
 		super.windowDidLoad()
+
+		let version : AnyObject! = NSBundle.mainBundle().infoDictionary?["CFBundleShortVersionString"]
+		versionText.stringValue = "iBreakTime v\(version)"
+
 		self.window?.center()
 		self.window?.makeKeyAndOrderFront(nil)
 		NSApp.activateIgnoringOtherApps(true)
