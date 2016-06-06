@@ -8,65 +8,34 @@
 
 import Cocoa
 
-class breaktimer : NSObject {
+class IdleTimer {
+	var idleTime: Int = 0
+	var _maxIdleInterval: Int = 20
 	
-	let soundFileName = "bowl.wav"
-	var timeToWork = true
-	private var _workInterval: Int = 55 * 60
-	private var _breakInterval: Int = 5 * 60
-	var maxIdleInterval = 20
-	var leftTime = 0
-	let timerInterval = 10
-	var cyclesCount = 0
-	var localTime = NSDate()
-	
-	func updateLeftTime(newInterval: Int, _ prevInterval: Int) {
-		if newInterval > prevInterval {
-			leftTime += newInterval - prevInterval
-		} else {
-			leftTime -= prevInterval - newInterval
-		}
-	}
-	
-	var workInterval: Int {
+	var maxIdleInterval: Int {
 		set {
-			let prevInterval = _workInterval
-			
-			if newValue < 60 || newValue > 600 * 60 {
-				_workInterval = 55 * 60
+			// between 1 second and 30 minutes
+			if newValue < 1 || newValue > 30 * 60 {
+				_maxIdleInterval = 20
 			} else {
-				_workInterval = newValue
-			}
-			
-			if timeToWork {
-				updateLeftTime(_workInterval, prevInterval)
-			}
-		}
-		get {
-			return _workInterval
-		}
-	}
-	
-	var breakInterval: Int {
-		set {
-			let prevInterval = _breakInterval
-			if newValue < 60 || newValue > 600 * 60 {
-				_breakInterval = 5 * 60
-			} else {
-				_breakInterval = newValue
-			}
-			
-			if !timeToWork {
-				updateLeftTime(_breakInterval, prevInterval)
+				_maxIdleInterval = newValue
 			}
 		}
 		
 		get {
-			return _breakInterval
+			return _maxIdleInterval
 		}
 	}
 	
-
+	var idle: Bool {
+		get {
+			return idleTime > maxIdleInterval
+		}
+	}
+	
+	func tick() {
+		idleTime = getIdleTime()
+	}
 	
 	func getIdleTime() -> Int {
 		var matchingServices: io_iterator_t = 0
@@ -88,6 +57,66 @@ class breaktimer : NSObject {
 		
 		return idle
 	}
+}
+
+class Breaktimer : NSObject {
+	let soundFileName = "bowl.wav"
+	let timerInterval = 1
+	let idleTimer = IdleTimer()
+	var lastCheckTime = NSDate()
+	private var _workInterval: Int = 55 * 60
+	private var _breakInterval: Int = 5 * 60
+	var timeToWork = true
+	var leftTime = 0
+	var cyclesCount = 0
+	
+	func updateLeftTime(newInterval: Int, _ prevInterval: Int) {
+		if newInterval > prevInterval {
+			leftTime += newInterval - prevInterval
+		} else {
+			leftTime -= prevInterval - newInterval
+		}
+	}
+	
+	var workInterval: Int {
+		set {
+			let prevInterval = _workInterval
+			
+			// between 1 and 600 minutes. defaulf: 55 minutes
+			if newValue < 60 || newValue > 600 * 60 {
+				_workInterval = 55 * 60
+			} else {
+				_workInterval = newValue
+			}
+			
+			if timeToWork {
+				updateLeftTime(_workInterval, prevInterval)
+			}
+		}
+		get {
+			return _workInterval
+		}
+	}
+	
+	var breakInterval: Int {
+		set {
+			let prevInterval = _breakInterval
+			// between 1 and 600 minutes. defaulf: 5 minutes
+			if newValue < 60 || newValue > 600 * 60 {
+				_breakInterval = 5 * 60
+			} else {
+				_breakInterval = newValue
+			}
+			
+			if !timeToWork {
+				updateLeftTime(_breakInterval, prevInterval)
+			}
+		}
+		
+		get {
+			return _breakInterval
+		}
+	}
 	
 	func playSound() {
 		NSSound(named: soundFileName)!.play()
@@ -99,38 +128,35 @@ class breaktimer : NSObject {
 	}
 	
 	func breaktimer() {
-		var idle = getIdleTime()
+		idleTimer.tick()
 		
-		if Int(-localTime.timeIntervalSinceNow) > idle {
-			idle = Int(-localTime.timeIntervalSinceNow)
-			if !timeToWork && idle > breakInterval {
-				idle = 0
-				timeToWork = true
-				leftTime = workInterval
-				return
-			}
+		// check if mac was in sleep mode
+		if Int(-lastCheckTime.timeIntervalSinceNow) > breakInterval {
+			timeToWork = true
+			leftTime = workInterval
 		}
-		localTime = NSDate()
-
+		lastCheckTime = NSDate()
+		
 		if timeToWork {
-			if idle < maxIdleInterval && leftTime > 0 {
+			if !idleTimer.idle && leftTime > 0 {
 				leftTime -= timerInterval
 				if leftTime <= 0 {
 					playSound()
 				}
 			}
-
-			//	Wait until user takes a break
-			if leftTime <= 0 && idle >= maxIdleInterval {
+			
+			//	work time is done, wait until user takes a break
+			if leftTime <= 0 && idleTimer.idle {
 				timeToWork = false
-				leftTime = breakInterval - maxIdleInterval
+				leftTime = breakInterval - idleTimer.maxIdleInterval
 				cyclesCount += 1
 			}
-
-			if idle >= breakInterval {
+			
+			// if user takes a break, reset timer
+			if idleTimer.idleTime >= breakInterval {
 				leftTime = workInterval
 			}
-		} else {
+		} else { // if time to break
 			leftTime -= timerInterval
 			if leftTime <= 0 {
 				playSound()
@@ -139,12 +165,14 @@ class breaktimer : NSObject {
 			}
 		}
 	}
-
-	 func start(initialWorkInteval: Int, _ initialBreakInterval: Int) {
-		workInterval = initialWorkInteval
-		breakInterval = initialBreakInterval
+	
+	init(_ workInterval: Int, _ breakInterval: Int, _ maxIdleInterval: Int) {
+		super.init()
+		self.workInterval = workInterval
+		self.breakInterval = breakInterval
+		self.idleTimer.maxIdleInterval = maxIdleInterval
 		leftTime = workInterval
-
+		
 		NSTimer.scheduledTimerWithTimeInterval(Double(timerInterval), target: self, selector: #selector(breaktimer), userInfo: nil, repeats: true)
 	}
 	

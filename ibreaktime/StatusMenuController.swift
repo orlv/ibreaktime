@@ -15,7 +15,7 @@ class StatusMenuController: NSObject, PreferencesWindowDelegate {
 	var aboutWindow: AboutWindow!
 	let statusItem = NSStatusBar.systemStatusBar().statusItemWithLength(NSVariableStatusItemLength)
 	let defaults = NSUserDefaults.standardUserDefaults()
-	var bt: breaktimer!
+	var bt: Breaktimer!
 	
 	@IBAction func quitClicked(sender: AnyObject) {
 		NSApplication.sharedApplication().terminate(self)
@@ -63,27 +63,29 @@ class StatusMenuController: NSObject, PreferencesWindowDelegate {
 		
 		aboutWindow = AboutWindow()
 		
-		bt = breaktimer()
-		bt.start(defaults.integerForKey("workInterval"), defaults.integerForKey("breakInterval"))
+		bt = Breaktimer(defaults.integerForKey("workInterval"), defaults.integerForKey("breakInterval"), defaults.integerForKey("maxIdleInterval"))
 		
 		showStatus()
 		statusItem.menu = statusMenu
 		
 		defaults.setValue(bt.workInterval, forKey: "workInterval")
 		defaults.setValue(bt.breakInterval, forKey: "breakInterval")
+		defaults.setValue(bt.idleTimer.maxIdleInterval, forKey: "maxIdleInterval")
 		
 		showStatus()
 		statusItem.menu = statusMenu
 		
-		NSTimer.scheduledTimerWithTimeInterval(10, target: self, selector: #selector(showStatus), userInfo: nil, repeats: true)
+		NSTimer.scheduledTimerWithTimeInterval(1, target: self, selector: #selector(showStatus), userInfo: nil, repeats: true)
 	}
 	
 	func preferencesDidUpdate() {
 		bt.workInterval = defaults.integerForKey("workInterval")
 		bt.breakInterval = defaults.integerForKey("breakInterval")
+		bt.idleTimer.maxIdleInterval = defaults.integerForKey("maxIdleInterval")
 		
 		defaults.setValue(bt.workInterval, forKey: "workInterval")
 		defaults.setValue(bt.breakInterval, forKey: "breakInterval")
+		defaults.setValue(bt.idleTimer.maxIdleInterval, forKey: "maxIdleInterval")
 		
 		showStatus()
 	}
